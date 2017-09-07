@@ -56,7 +56,8 @@ class AuthController extends Controller
             return response()->json(['status'=>'error', 'message' => 'Invalid credentials'], 401);
 
         // generate a new API token
-        $user->update(['api_token', str_random(50)]);
+        $user->api_token = str_random(50);
+        $user->save();
         return response()->json(['status'=>'success', 'user' => $user], 200);
     }
 

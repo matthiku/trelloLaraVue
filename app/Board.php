@@ -12,7 +12,13 @@ class Board extends Model
      *
      * @var array
      */
-    protected $guarded = [
+    protected $fillable = [
+    	'name', 'user_id',
     ];
 
+
+    public function FunctionName()
+    {
+    	return $this->belongsTo(User::class);
+    }
 }
