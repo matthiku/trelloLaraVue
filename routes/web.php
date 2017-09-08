@@ -22,18 +22,33 @@ $router->post('/login', 'AuthController@login');
 $router->post('/logout', 'AuthController@logout');
 $router->get('/logout', 'AuthController@logout');
 
-
-// BOARDS 
-
+/*
+  Protected Routes
+*/
 $router->group(['middleware' => 'auth'], function () use ($router) {
-	// get one item
-	$router->get('/boards/{id}', 'BoardController@show');
-	// get all items
-	$router->get('/boards', 'BoardController@index');
-	// create new item
-	$router->post('/boards', 'BoardController@store');
-	// create new item
-	$router->patch('/boards/{id}', 'BoardController@update');
-	// create new item
-	$router->delete('/boards/{id}', 'BoardController@destroy');
+
+  // BOARDS
+  $router->get('/boards', 'BoardController@index');   // all boards
+  $router->post('/boards', 'BoardController@store');      // create new
+  $router->get('/boards/{board}', 'BoardController@show');   // get single
+	$router->put('/boards/{board}', 'BoardController@update');  // update
+	$router->patch('/boards/{board}', 'BoardController@update'); // update
+	$router->delete('/boards/{board}', 'BoardController@destroy'); // delete
+
+  // LISTS
+  $router->get(   '/boards/{board}/list',        'ListController@index');     // get all
+  $router->post(  '/boards/{board}/list',        'ListController@store');// create new
+  $router->get(   '/boards/{board}/list/{list}', 'ListController@show');
+	$router->put(   '/boards/{board}/list/{list}', 'ListController@update');
+	$router->patch( '/boards/{board}/list/{list}', 'ListController@update');
+	$router->delete('/boards/{board}/list/{list}', 'ListController@destroy');
+
+  // CARDS
+  $router->get(   '/boards/{board}/list/{list}/card',        'CardController@index');     // get all
+  $router->post(  '/boards/{board}/list/{list}/card',        'CardController@store');// create new
+  $router->get(   '/boards/{board}/list/{list}/card/{card}', 'CardController@show');
+	$router->put(   '/boards/{board}/list/{list}/card/{card}', 'CardController@update');
+	$router->patch( '/boards/{board}/list/{list}/card/{card}', 'CardController@update');
+	$router->delete('/boards/{board}/list/{list}/card/{card}', 'CardController@destroy');
+
 });

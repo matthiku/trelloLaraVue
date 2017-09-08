@@ -28,19 +28,13 @@ class BoardController extends Controller
      */
     public function index()
     {
-        //
-        return Auth::user()->boards;
+      // get the boards with lists eager-loaded
+      $boards = Board::where('user_id', Auth::id())->with('lists')->get();
+
+      return response()->json(['message'=>'success', 'data' => $boards], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -50,10 +44,14 @@ class BoardController extends Controller
      */
     public function store(Request $request)
     {
-        $board = new Board( ['name' => $request->get('name')] );
-        Auth::user()->boards()->save($board);
+      $this->validate($request, [
+        'name' => 'required',
+      ]);
 
-        return response()->json(['message'=>'success', 'data' => $board], 200);
+      $board = new Board( ['name' => $request->get('name')] );
+      Auth::user()->boards()->save($board);
+
+      return response()->json(['message'=>'success', 'data' => $board], 200);
     }
 
     /**
@@ -69,11 +67,11 @@ class BoardController extends Controller
 
         if (! $board) // this board wasn't even found
             return response()->json(['status'=>'error', 'message' => 'ID number wrong or invalid request!'], 403);
-        
+
         // does the user own this board?
-        if ($board->user_id == Auth::id()) 
+        if ($board->user_id == Auth::id())
             return response()->json(['message'=>'success', 'data' => $board], 200);
-    
+
         // the user doesn't own this board
         return response()->json(['status'=>'error', 'message' => 'unauthorized!'], 401);
     }
@@ -98,19 +96,23 @@ class BoardController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // check if board with this id exists
-        $board = Board::find($id);
-        if (!$board) 
-            return response()->json(['status'=>'error', 'message' => 'ID number wrong or invalid request!'], 403);
-        
-        // does the user own this board?
-        if ($board->user_id == Auth::id()) {
-            $board->update(['name' => $request->name]);
-            return response()->json(['message'=>'success', 'data' => $board], 200);
-        }
-    
-        // the user doesn't even own this board
-        return response()->json(['status'=>'error', 'message' => 'unauthorized!'], 401);
+      $this->validate($request, [
+        'name' => 'required',
+      ]);
+
+      // check if board with this id exists
+      $board = Board::find($id);
+      if (!$board)
+          return response()->json(['status'=>'error', 'message' => 'ID number wrong or invalid request!'], 403);
+
+      // does the user own this board?
+      if ($board->user_id == Auth::id()) {
+          $board->update(['name' => $request->name]);
+          return response()->json(['message'=>'success', 'data' => $board], 200);
+      }
+
+      // the user doesn't even own this board
+      return response()->json(['status'=>'error', 'message' => 'unauthorized!'], 401);
     }
 
     /**
@@ -121,18 +123,18 @@ class BoardController extends Controller
      */
     public function destroy($id)
     {
-        // check if board with this id exists
-        $board = Board::find($id);
-        if (!$board) 
-            return response()->json(['status'=>'error', 'message' => 'ID number wrong or invalid request!'], 403);
-        
-        // does the user own this board?
-        if ($board->user_id == Auth::id()) {
-            $board->delete();
-            return response()->json(['message'=>'success', 'data' => $board], 200);
-        }
-    
-        // the user doesn't even own this board
-        return response()->json(['status'=>'error', 'message' => 'unauthorized!'], 401);
+      // check if board with this id exists
+      $board = Board::find($id);
+      if (!$board)
+          return response()->json(['status'=>'error', 'message' => 'ID number wrong or invalid request!'], 403);
+
+      // does the user own this board?
+      if ($board->user_id == Auth::id()) {
+          $board->delete();
+          return response()->json(['message'=>'success', 'data' => $board], 200);
+      }
+
+      // the user doesn't even own this board
+      return response()->json(['status'=>'error', 'message' => 'unauthorized!'], 401);
     }
 }
