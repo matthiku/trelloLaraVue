@@ -28,10 +28,14 @@ class AuthController extends Controller
   public function register(Request $request)
   {
     $this->validate($request, [
+    ]);
+    $validator = \Validator::make($request->all(), [
       'username' => 'required',
       'password' => 'required',
-      'email' => 'required|email|unique:users',
+      'email'    => 'required|email|unique:users',
     ]);
+    if ($validator->fails())
+       return response()->json(['status'=>'error', 'message' => $validator->errors() ], 400);
 
     $user = User::create([
       'username' => $request->username,
@@ -52,10 +56,12 @@ class AuthController extends Controller
    */
   public function login(Request $request)
   {
-    $this->validate($request, [
+    $validator = \Validator::make($request->all(), [
       'password' => 'required',
-      'email' => 'required|email|unique:users',
+      'email'    => 'required|email',
     ]);
+    if ($validator->fails())
+       return response()->json(['status'=>'error', 'message' => $validator->errors() ], 400);
 
     // check if the user's email is correct
     $user = User::where('email', $request->email)->first();

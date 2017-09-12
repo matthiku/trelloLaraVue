@@ -29,7 +29,7 @@ class BoardController extends Controller
     public function index()
     {
       // get the boards with lists eager-loaded
-      $boards = Board::where('user_id', Auth::id())->with('lists')->get();
+      $boards = Auth::user()->boards->load('lists.cards');
 
       return response()->json(['message'=>'success', 'data' => $boards], 200);
     }
@@ -63,7 +63,7 @@ class BoardController extends Controller
     public function show($id)
     {
         //
-        $board = Board::find($id);
+        $board = Board::with('lists')->find($id);
 
         if (! $board) // this board wasn't even found
             return response()->json(['status'=>'error', 'message' => 'ID number wrong or invalid request!'], 403);
