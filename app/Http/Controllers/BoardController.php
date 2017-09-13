@@ -131,7 +131,8 @@ class BoardController extends Controller
       // does the user own this board?
       if ($board->user_id == Auth::id()) {
           $board->delete();
-          return response()->json(['message'=>'success', 'data' => $board], 200);
+          // now return the (updated) full list of boards 
+          return $this->index();
       }
 
       // the user doesn't even own this board
