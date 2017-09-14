@@ -28,7 +28,7 @@ class BoardController extends Controller
      */
     public function index()
     {
-      // get the boards with lists eager-loaded
+      // get the boards with lists and cards eager-loaded
       $boards = Auth::user()->boards->load('lists.cards');
 
       return response()->json(['message'=>'success', 'data' => $boards], 200);

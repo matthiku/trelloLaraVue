@@ -15,7 +15,8 @@ class CreateListsTable extends Migration
     {
         Schema::create('lists', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('board_id');
+            $table->integer('board_id')->unsigned();
+            $table->foreign('board_id')->references('id')->on('boards')->onDelete('cascade');
             $table->string('name');
             $table->timestamps();
         });

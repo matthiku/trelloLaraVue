@@ -66,11 +66,11 @@ class AuthController extends Controller
     // check if the user's email is correct
     $user = User::where('email', $request->email)->first();
     if (!$user)
-      return response()->json(['status'=>'error', 'message' => 'User not found!'], 401);
+      return response()->json(['status'=>'error', 'message' => 'User not found!'], 403);
 
     // check if the password is correct
     if (! app('hash')->check($request->password, $user->password))
-      return response()->json(['status'=>'error', 'message' => 'Invalid credentials'], 401);
+      return response()->json(['status'=>'error', 'message' => 'Invalid credentials'], 403);
 
     // generate a new API token
     $user->api_token = str_random(50);
